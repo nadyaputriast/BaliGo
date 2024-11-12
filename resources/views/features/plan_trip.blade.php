@@ -28,7 +28,7 @@
                 </select>
             </div>
             <button type="submit" class="btn btn-primary">Plan Trip</button>
-    <a href="{{ route('welcome') }}" class="btn btn-primary">Kembali</a>
+            <a href="{{ route('welcome') }}" class="btn btn-primary">Kembali</a>
         </form>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>

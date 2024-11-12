@@ -43,6 +43,7 @@ Route::get('/wisata/{id}', [FeaturesController::class, 'detail'])->name('feature
 // Plan Trip (Rekomendasi)
 Route::get('/plan-trip', [FeaturesController::class, 'showPlanTripForm'])->name('features.plan_trip_form');
 Route::post('/plan-trip', [FeaturesController::class, 'planTrip'])->name('features.plan_trip');
+Route::get('/plan-trip-result', [FeaturesController::class, 'planTripResult'])->name('features.plan_trip_result');
 
 // Ulasan
 Route::get('/ulasan/{id}', [UlasanController::class, 'show'])->name('ulasan.show');
