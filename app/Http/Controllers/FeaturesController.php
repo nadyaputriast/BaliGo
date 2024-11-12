@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\DestinasiWisata;
+use App\Models\Rekomendasi;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class FeaturesController extends Controller
 {
@@ -96,48 +98,100 @@ class FeaturesController extends Controller
 
     public function planTrip(Request $request)
     {
-        $budget = $request->input('budget');
-        $jumlahDestinasi = $request->input('jumlah_destinasi');
-        $kabupatenKota = $request->input('kabupaten_kota');
+        // Validasi input
+        $validated = $request->validate([
+            'budget' => 'required|numeric',
+            'jumlah_destinasi' => 'required|numeric',
+            'kabupaten_kota' => 'required|array',
+            'per_page' => 'nullable|numeric'
+        ]);
 
-        // Mengambil destinasi wisata berdasarkan kabupaten/kota yang dipilih
+        // Simpan data ke session untuk digunakan di result page
+        session([
+            'trip_data' => [
+                'budget' => $validated['budget'],
+                'jumlah_destinasi' => $validated['jumlah_destinasi'],
+                'kabupaten_kota' => $validated['kabupaten_kota'],
+                'per_page' => $validated['per_page'] ?? 10
+            ]
+        ]);
+
+        // Redirect ke halaman hasil
+        return redirect()->route('features.plan_trip_result');
+    }
+
+    public function planTripResult(Request $request)
+    {
+        // Ambil data dari session
+        $tripData = session('trip_data');
+
+        if (!$tripData) {
+            return redirect()->route('features.plan_trip_form')
+                ->with('error', 'Silakan isi form terlebih dahulu');
+        }
+
+        $budget = $tripData['budget'];
+        $jumlahDestinasi = $tripData['jumlah_destinasi'];
+        $kabupatenKota = $tripData['kabupaten_kota'];
+        $perPage = $request->input('per_page', $tripData['per_page']);
+
+        // Ambil data destinasi wisata
         $destinasiWisata = DestinasiWisata::whereIn('kabupaten_kota', $kabupatenKota)->get();
 
-        // Implementasi algoritma pencarian kombinasi destinasi wisata
+        // Inisialisasi array hasil
         $hasil = [];
+
+        // Cari kombinasi
         $this->cariKombinasi($destinasiWisata, $budget, $jumlahDestinasi, 0, [], $hasil);
 
-        // Filter hasil untuk memastikan kombinasi berada dalam rentang anggaran yang lebih dekat dengan anggaran maksimum
+        // Filter hasil
         $hasil = array_filter($hasil, function ($kombinasi) use ($budget) {
             $total_biaya = array_sum(array_column($kombinasi, 'harga_tiket'));
             return $total_biaya >= ($budget * 0.8) && $total_biaya <= $budget;
         });
 
-        return view('features.plan_trip_result', compact('hasil', 'budget', 'kabupatenKota', 'jumlahDestinasi'));
+        // Pagination
+        $page = $request->input('page', 1);
+        $offset = ($page - 1) * $perPage;
+
+        $paginatedResults = new LengthAwarePaginator(
+            array_slice($hasil, $offset, $perPage),
+            count($hasil),
+            $perPage,
+            $page,
+            ['path' => $request->url()]
+        );
+
+        return view('features.plan_trip_result', compact('paginatedResults', 'budget', 'kabupatenKota', 'jumlahDestinasi', 'perPage'));
     }
 
     private function cariKombinasi($destinasiWisata, $budget, $jumlahDestinasi, $start, $kombinasi, &$hasil)
     {
-        // Jika anggaran negatif, hentikan
+        // Pastikan 'kombinasi' adalah array
+        if (!is_array($kombinasi)) {
+            $kombinasi = [];
+        }
+
+        // Jika anggaran sudah negatif, hentikan proses pencarian
         if ($budget < 0) {
             return;
         }
 
-        // Jika kombinasi sudah mencapai jumlah destinasi yang diinginkan, periksa apakah sesuai anggaran
+        // Jika jumlah destinasi dalam kombinasi sudah sesuai jumlah yang diinginkan, periksa apakah sesuai anggaran
         if (count($kombinasi) == $jumlahDestinasi) {
-            $total_biaya = array_sum(array_column($kombinasi, 'harga_tiket')); // Hitung total harga kombinasi
+            $total_biaya = array_sum(array_column($kombinasi, 'harga_tiket'));
             if ($total_biaya <= $budget) {
-                $hasil[] = $kombinasi;  // Simpan kombinasi valid
+                $hasil[] = $kombinasi; // Tambahkan kombinasi yang valid ke hasil
             }
             return;
         }
 
-        // Lanjutkan mencari kombinasi
+        // Lakukan pencarian kombinasi secara rekursif
         for ($i = $start; $i < count($destinasiWisata); $i++) {
             $new_kombinasi = array_merge($kombinasi, [$destinasiWisata[$i]]);
-            $total_sementara = array_sum(array_column($new_kombinasi, 'harga_tiket')); // Hitung total biaya sementara
+            $total_sementara = array_sum(array_column($new_kombinasi, 'harga_tiket'));
 
-            // Jika total biaya sementara tidak melebihi anggaran, lanjutkan ke elemen berikutnya
+            // Jika total sementara tidak melebihi anggaran, lanjutkan pencarian
             if ($total_sementara <= $budget) {
                 $this->cariKombinasi($destinasiWisata, $budget, $jumlahDestinasi, $i + 1, $new_kombinasi, $hasil);
             }
