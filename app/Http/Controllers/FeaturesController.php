@@ -14,10 +14,18 @@ class FeaturesController extends Controller
         $kabupatenList = DestinasiWisata::getKabupatenKotaOptions();
         $jenisWisataList = DestinasiWisata::getJenisWisataOptions();
 
+        $topDestinasi = [];
+        foreach ($jenisWisataList as $jenis) {
+            $topDestinasi[$jenis] = DestinasiWisata::where('jenis_wisata', $jenis)
+                ->orderBy('rating_destinasi', 'desc')
+                ->orderBy('harga_tiket', 'asc')
+                ->first();
+        }
+        
         $mostAffordable = DestinasiWisata::orderBy('harga_tiket', 'asc')->first();
         $mostPopular = DestinasiWisata::orderBy('rating_destinasi', 'desc')->first();
 
-        return view('welcome', compact('kabupatenList', 'mostAffordable', 'mostPopular'));
+        return view('welcome', compact('kabupatenList', 'topDestinasi', 'mostAffordable', 'mostPopular'));
     }
 
     public function search(Request $request)
@@ -150,6 +158,13 @@ class FeaturesController extends Controller
             return $total_biaya >= ($budget * 0.8) && $total_biaya <= $budget;
         });
 
+        $rekomendasi = new Rekomendasi();
+        $rekomendasi->maks_budget = $budget;
+        // $rekomendasi->kabupaten_kota = implode(', ', $kabupatenKota); // Simpan sebagai string biasa
+        $rekomendasi->kabupaten_kota = json_encode($kabupatenKota);
+        $rekomendasi->banyak_tempat = $jumlahDestinasi;
+        $rekomendasi->save();
+
         // Pagination
         $page = $request->input('page', 1);
         $offset = ($page - 1) * $perPage;
@@ -196,5 +211,14 @@ class FeaturesController extends Controller
                 $this->cariKombinasi($destinasiWisata, $budget, $jumlahDestinasi, $i + 1, $new_kombinasi, $hasil);
             }
         }
+    }
+
+    public function showByJenisWisata($jenis)
+    {
+        $destinasiWisata = DestinasiWisata::where('jenis_wisata', $jenis)
+            ->orderBy('nama_destinasi', 'asc')
+            ->get();
+
+        return view('features.jenis_wisata', compact('destinasiWisata', 'jenis'));
     }
 }
