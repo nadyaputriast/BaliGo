@@ -36,6 +36,7 @@ Route::get('/sortKab', [FeaturesController::class, 'sortKab'])->name('features.s
 
 // Hightlight Destinasi Tiap Kabupaten/Kota
 Route::get('/kabupaten/{kabupaten_kota}', [FeaturesController::class, 'showByKabupaten'])->name('features.kabupaten');
+Route::get('/jenis-wisata/{jenis}', [FeaturesController::class, 'showByJenisWisata'])->name('features.jenis_wisata');
 
 // Detail Destinasi
 Route::get('/wisata/{id}', [FeaturesController::class, 'detail'])->name('features.detail_destinasi');
@@ -47,4 +48,3 @@ Route::get('/plan-trip-result', [FeaturesController::class, 'planTripResult'])->
 
 // Ulasan
 Route::get('/ulasan/{id}', [UlasanController::class, 'show'])->name('ulasan.show');
-Route::post('/ulasan', [UlasanController::class, 'store'])->name('ulasan.store')->middleware('auth');

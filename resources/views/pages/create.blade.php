@@ -33,7 +33,7 @@
             </div>            
             <div class="form-group">
                 <label for="harga_tiket">Harga Tiket</label>
-                <input type="number" class="form-control" id="harga_tiket" name="harga_tiket" required>
+                <input type="number" class="form-control" id="harga_tiket" name="harga_tiket" step="1000" required>
             </div>
             <div class="form-group">
                 <label for="rating_destinasi">Rating</label>
