@@ -64,10 +64,10 @@
             <input type="password" name="password_confirmation" id="password_confirmation" class="form-control">
         </div>
 
-        <button type="submit" class="btn btn-primary">Update Profil</button>
+        <button type="submit" class="btn btn-primary">Update Profile</button>
     </form>
 
-    <a href="{{ route('/') }}" class="btn btn-secondary mt-3">Kembali ke Home</a>
+    <a href="{{ route('welcome') }}" class="btn btn-primary mb-3">Kembali</a>
 </div>
 </body>
 </html>

@@ -18,7 +18,7 @@ class UlasanController extends Controller
 
     public function store(Request $request)
     {
-        $userId = Auth::id(); // Alternatif lain untuk mendapatkan ID user
+        $userId = Auth::id();
         if (!$userId) {
             return redirect()->route('login.form')->with('error', 'Anda harus login untuk memberikan ulasan.');
         }
@@ -29,6 +29,17 @@ class UlasanController extends Controller
             'foto_ulasan' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
+        // Temukan destinasi terlebih dahulu
+        $destinasi = DestinasiWisata::findOrFail($request->id_destinasi);
+
+        // Rating awal
+        $ratingLama = $destinasi->rating_destinasi ?? 5;
+        $ratingBaru = $request->rating;
+
+        // Hitung rating baru dengan rata-rata
+        $ratingKumulatif = round(($ratingLama + $ratingBaru) / 2, 1);
+
+        // Simpan data ulasan
         $ulasanData = new Ulasan();
         $ulasanData->tanggal_ulasan = Carbon::now();
         $ulasanData->isi_ulasan = $request->isi_ulasan;
@@ -36,6 +47,7 @@ class UlasanController extends Controller
         $ulasanData->id_user = $userId;
         $ulasanData->id_destinasi = $request->id_destinasi;
 
+        // Jika ada foto ulasan, simpan file-nya
         if ($request->hasFile('foto_ulasan')) {
             $filename = $request->file('foto_ulasan')->store('ulasan', 'public');
             $ulasanData->foto_ulasan = $filename;
@@ -43,12 +55,8 @@ class UlasanController extends Controller
 
         $ulasanData->save();
 
-        // Hitung rata-rata rating untuk destinasi ini
-        $averageRating = Ulasan::where('id_destinasi', $request->id_destinasi)->avg('rating');
-
-        // Temukan destinasi dan update rating_destinasi-nya
-        $destinasi = DestinasiWisata::findOrFail($request->id_destinasi);
-        $destinasi->rating_destinasi = round($averageRating, 1);
+        // Update rating destinasi
+        $destinasi->rating_destinasi = $ratingKumulatif;
         $destinasi->save();
 
         return redirect()->route('ulasan.show', $request->id_destinasi)->with('success', 'Ulasan berhasil ditambahkan.');

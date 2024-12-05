@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use Illuminate\Validation\Rule;
 
 class AuthController extends Controller
 {
@@ -16,22 +17,30 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        $credentials = $request->validate([
-            'username' => 'required',
-            'password' => 'required',
-        ]);
+        $credentials = $request->only('username', 'password');
 
         // Check if username and password match "admin123"
         if ($credentials['username'] === 'admin123' && $credentials['password'] === 'admin123') {
-            // Redirect to index.blade.php if login is successful
-            return redirect()->route('pages.index');
+            return redirect()->route('pages.index')->with('success', 'Login berhasil!');
         }
-        else if(Auth::attempt($credentials)) {
-            // Redirect ke halaman welcome jika login berhasil
+
+        // Cek username di database
+        $user = \App\Models\User::where('username', $credentials['username'])->first();
+        if (!$user) {
+            return redirect()->back()->withErrors(['username' => 'Username tidak ditemukan.']);
+        }
+
+        // Cek password
+        if (!\Illuminate\Support\Facades\Hash::check($credentials['password'], $user->password)) {
+            return redirect()->back()->withErrors(['password' => 'Password salah.']);
+        }
+
+        // Login
+        if (Auth::attempt($credentials)) {
             return redirect()->route('welcome')->with('success', 'Login berhasil! Selamat datang.');
         }
-        // Redirect to login.blade.php if login fails
-        return redirect()->route('login')->withErrors(['login' => 'Invalid username or password.']);
+
+        return redirect()->back()->withErrors(['login' => 'Login gagal. Silakan coba lagi.']);
     }
 
     public function showRegisterForm()
@@ -82,9 +91,9 @@ class AuthController extends Controller
         $request->validate([
             'nama_user' => 'required|string|max:255',
             'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
-            'username' => 'required|string|max:255|unique:users,username,' . $user->id_user,
+            'username' => ['required', 'string', 'max:255', Rule::unique('users', 'username')->ignore($user->id_user, 'id_user')],
             'no_telepon' => 'nullable|string|max:15',
-            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id_user,
+            'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user->id_user, 'id_user')],
             'password' => 'nullable|string|min:6|confirmed',
         ]);
 
@@ -102,6 +111,6 @@ class AuthController extends Controller
 
         $user->save();
 
-        return redirect()->route('profile.form')->with('success', 'Profil berhasil diperbarui.');
+        return redirect()->route('welcome')->with('success', 'Profil berhasil diperbarui.');
     }
 }

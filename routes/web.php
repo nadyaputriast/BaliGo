@@ -47,9 +47,5 @@ Route::post('/plan-trip', [FeaturesController::class, 'planTrip'])->name('featur
 Route::get('/plan-trip-result', [FeaturesController::class, 'planTripResult'])->name('features.plan_trip_result');
 
 // Ulasan
-<<<<<<< HEAD
-Route::get('/ulasan/{id}', [UlasanController::class, 'show'])->name('ulasan.show');
-=======
 Route::get('/ulasan/{id}', [UlasanController::class, 'show'])->name('ulasan.show');
 Route::post('/ulasan', [UlasanController::class, 'store'])->name('ulasan.store')->middleware('auth');
->>>>>>> 79058d4f72909bd3aeb8d01c1ec5e07fb21a2e09

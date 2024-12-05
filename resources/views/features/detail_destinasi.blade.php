@@ -31,11 +31,14 @@
                 @if (preg_match('/^\d+$/', $destinasiWisata->reservasi))
                     <!-- Jika hanya angka (biasanya nomor whatsapp) -->
                     <a href="https://wa.me/{{ $destinasiWisata->reservasi }}" target="_blank">Reservasi di Sini!</a>
-                @else
+                @elseif (filter_var($destinasiWisata->reservasi, FILTER_VALIDATE_URL))
                     <!-- Jika link adalah URL biasa -->
                     <a href="{{ $destinasiWisata->reservasi }}" target="_blank">Reservasi di Sini!</a>
+                @else
+                    <!-- Jika bukan nomor telepon dan bukan URL -->
+                    <span>{{ $destinasiWisata->reservasi }}</span>
                 @endif
-            </li>
+            </li>            
             <li class="list-group-item"><strong>Jam Buka:</strong> {{ $destinasiWisata->jam_buka }}</li>
             <li class="list-group-item"><strong>Jam Tutup:</strong> {{ $destinasiWisata->jam_tutup }}</li>
             <li class="list-group-item"><strong>Fasilitas:</strong>

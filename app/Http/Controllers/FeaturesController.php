@@ -160,7 +160,6 @@ class FeaturesController extends Controller
 
         $rekomendasi = new Rekomendasi();
         $rekomendasi->maks_budget = $budget;
-        // $rekomendasi->kabupaten_kota = implode(', ', $kabupatenKota); // Simpan sebagai string biasa
         $rekomendasi->kabupaten_kota = json_encode($kabupatenKota);
         $rekomendasi->banyak_tempat = $jumlahDestinasi;
         $rekomendasi->save();
