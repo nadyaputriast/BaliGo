@@ -118,21 +118,21 @@
                     </div>
                     <div class="carousel-inner">
                         <div class="carousel-item active">
-                            <img src="/BaliGo/public/images/1730510145.png" alt="slide1" class="d-block w-100 img-h">
+                            <img src="/images/background1.jpg" alt="slide1" class="d-block w-100 img-h">
                             <div class="carousel-caption d-none d-md-block">
                                 <p class="fw-lighter">Capturing Moments,</p>
                                 <p class="fw-lighter">Creeting Memories</p>
                             </div>
                         </div>
                         <div class="carousel-item">
-                            <img src="/BaliGo/public/images/1730514574.jpeg" alt="slide2" class="d-block w-100 img-h">
+                            <img src="/images/background2.jpg" alt="slide2" class="d-block w-100 img-h">
                             <div class="carousel-caption d-none d-md-block">
                                 <p class="fw-lighter">Capturing Moments,</p>
                                 <p class="fw-lighter">Creeting Memories</p>
                             </div>
                         </div>
                         <div class="carousel-item">
-                            <img src="/BaliGo/public/images/1730510335.png" alt="slide3" class="d-block w-100 img-h">
+                            <img src="/images/background1.jpg" alt="slide3" class="d-block w-100 img-h">
                             <div class="carousel-caption d-none d-md-block">
                                 <p class="fw-lighter">Capturing Moments,</p>
                                 <p class="fw-lighter">Creeting Memories</p>

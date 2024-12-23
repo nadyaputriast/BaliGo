@@ -20,6 +20,10 @@
             overflow-y: auto;
         }
 
+        .row {
+            padding: 0;
+        }
+
         .card {
             border: none;
             border-radius: 10px;
@@ -28,6 +32,7 @@
             height: 100%;
             display: flex;
             flex-direction: column;
+            max-height: 400px;
         }
 
         .card-img {

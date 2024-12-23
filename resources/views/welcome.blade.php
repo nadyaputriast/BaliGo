@@ -89,6 +89,9 @@
         .navbar {
             background-color: transparent;
             transition: background-color 0.3s ease;
+            position: fixed;
+            top: 0;
+
         }
 
         .navbar.scrolled {
@@ -177,7 +180,7 @@
     <div class="container-fluid">
         <div id="hero"
             style="background: url('{{ asset('images/hero.png') }}') no-repeat center center; background-size: cover;">
-            <nav class="navbar navbar-expand-lg navbar-transparent fixed-top" id="navbar">
+            <nav class="navbar navbar-expand-lg navbar-transparent  sticky-top" id="navbar">
                 <div class="container">
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                         aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -199,6 +202,21 @@
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('login.form') }}">Login</a>
+                            </li>
+                            {{-- <li class="nav-item">
+                                <a class="nav-link" href="{{ route('logout') }}">Logout</a>
+                            </li> --}}
+                            {{-- <form action="{{ route('logout') }}" method="POST">
+                                @csrf
+                                <li class="nav-item">
+                                    <a class="nav-link">Logout</a>
+                                </li>
+                            </form> --}}
+                            <li class="nav-item">
+                                <form action="{{ route('logout') }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="nav-link">Logout</button>
+                                </form>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('profile.form') }}">Profile</a>
@@ -294,13 +312,13 @@
                                     <i class="fas fa-star text-warning"></i> {{ $mostAffordable->rating_destinasi }}
                                 </p>
                                 <a href="{{ route('features.detail_destinasi', ['id' => $mostAffordable->id_destinasi]) }}"
-                                    class="btn btn-secondary">Lihat Detail</a>
+                                    class="btn btn-secondary d-flex align-items-center justify-content-center">Lihat Detail</a>
                             </div>
                         </div>
                     @endif
                 </div>
                 <div class="col-9">
-                    <h4 class="mt-6">Most Popular</h4>
+                    <h4 class="mt-5">Most Popular</h4>
                     @if ($mostPopular)
                         <div class="card d-flex flex-row p-4 card-inspiration">
                             <img src="{{ asset('storage/' . $mostPopular->foto_destinasi) }}"
@@ -313,7 +331,7 @@
                                     <i class="fas fa-star text-warning"></i> {{ $mostPopular->rating_destinasi }}
                                 </p>
                                 <a href="{{ route('features.detail_destinasi', ['id' => $mostPopular->id_destinasi]) }}"
-                                    class="btn btn-secondary">Lihat Detail</a>
+                                    class="btn btn-secondary d-flex align-items-center justify-content-center">Lihat Detail</a>
                             </div>
                         </div>
                     @endif

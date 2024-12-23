@@ -190,7 +190,7 @@
         <p><i class="bi bi-telephone me-2"></i>Reservasi: <a href="https://wa.me/{{ $destinasiWisata->reservasi }}"
                 target="_blank">Reservasi di Sini!</a></p>
         <p><i class="bi bi-geo-alt me-2"></i>Alamat: {{ $destinasiWisata->alamat_lengkap }}</p>
-        <p><i class="bi bi-globe me-2"></i>Google Maps: <a href="{{ $destinasiWisata->link_gmaps }}"
+        <p><i class="bi bi-globe me-2"></i>Google Maps: <a href="{{ $destinasiWisata->link_maps }}"
                 target="_blank">{{ $destinasiWisata->alamat_lengkap }}</a></p>
         <p><i class="bi bi-phone me-2"></i>Media Sosial:
             @if ($destinasiWisata->website_medsos && $destinasiWisata->website_medsos->isNotEmpty())

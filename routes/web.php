@@ -20,6 +20,7 @@ Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('regi
 Route::post('/register', [AuthController::class, 'register'])->name('register');
 Route::get('/profile', [AuthController::class, 'showProfile'])->name('profile.form')->middleware('auth');
 Route::post('/profile', [AuthController::class, 'profile'])->name('profile')->middleware('auth');
+Route::post('/logout', [AuthController::class, 'destroy'])->name('logout');
 
 // CRUD Destinasi Wisata
 Route::get('/wisata/add', [AdminController::class, 'create'])->name('pages.create');
