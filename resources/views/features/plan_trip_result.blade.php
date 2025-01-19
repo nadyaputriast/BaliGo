@@ -208,7 +208,9 @@
                 </div>
             @endforeach
 
-            {{ $paginatedResults->links() }}
+            <div class="d-flex justify-content-center mt-4">
+                {{ $paginatedResults->links('pagination::bootstrap-5') }}
+            </div>
         @else
             <div class="alert alert-danger" role="alert">
                 Tidak ada destinasi yang sesuai dengan budget dan pilihan kabupaten/kota.
